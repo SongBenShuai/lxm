@@ -37,7 +37,7 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-button round @click='getLogin'>登录</el-button>
+            <el-button round @click='getLogin' :loading='loading'>登录</el-button>
           </el-form>
         </div>
       </el-main>
@@ -49,8 +49,11 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref, reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useStore()
+const loading = ref(false)
 
 // 绑定校验
 const loginFormRef = ref('')
@@ -77,11 +80,19 @@ const rules = reactive({
   ]
 })
 // 请求登录
-const getLogin = async (ruleForm) => {
+const getLogin = async () => {
   await loginFormRef.value.validate(async (valid) => {
     if (valid) {
-      const response = await store.dispatch('user/getLogin', loginForm)
-      console.log(response)
+      loading.value = true
+      try {
+        const response = await store.dispatch('user/getLogin', loginForm)
+        console.log('登录=》', response)
+        if (response) router.push('/layout')
+      } catch (e) {
+        console.log(e)
+      } finally {
+        loading.value = false
+      }
     }
   })
 }

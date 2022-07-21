@@ -3,17 +3,31 @@ import login from '../views/login'
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: login
   },
   {
     path: '/layout',
     name: 'layout',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../layout')
+    component: () => import('../layout'),
+    redirect: '/',
+    children: [
+      {
+        path: '/',
+        name: 'index',
+        component: () => import('../views/index')
+      }
+    ]
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/404')
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: '/404'
   }
 ]
 

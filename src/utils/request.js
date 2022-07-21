@@ -4,11 +4,13 @@ const serive = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
 })
-
+// 请求
 serive.interceptors.request.use(
   (config) => {
-    // const token = store.getters.token
-
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.token = token
+    }
     return config
   },
   (error) => {
@@ -16,6 +18,7 @@ serive.interceptors.request.use(
   }
 )
 
+// 响应
 serive.interceptors.response.use(
   (response) => {
     return response
@@ -24,6 +27,7 @@ serive.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
 const request = (options) => {
   if (options.method.toLowerCase() === 'get') {
     options.params = options.data || {}
